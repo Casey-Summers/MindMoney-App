@@ -20,5 +20,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "MindMoney"
-include(":app")
+include(":MindMoney")
  
