@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppTheme(
                 darkTheme = isSystemInDarkTheme(),
-                dynamicColor = true
+                dynamicColor = false
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
