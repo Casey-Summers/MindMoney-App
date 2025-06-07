@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.casey.mindmoney.navigation.NavigationRoutes
+import com.casey.mindmoney.screens.GoalsScreen
 import com.casey.mindmoney.screens.HomePageScreen
 import com.casey.mindmoney.screens.RevenueExpensesScreen
 import com.casey.mindmoney.ui.theme.AppTheme
@@ -39,6 +40,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(NavigationRoutes.MANAGE) {
                             RevenueExpensesScreen(navController)
+                        }
+                        composable(NavigationRoutes.GOALS) {
+                            GoalsScreen(navController)
                         }
                     }
                 }

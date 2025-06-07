@@ -66,8 +66,8 @@ fun MainScaffold(
                 )
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.Star, contentDescription = "Goals") },
-                    selected = false,
-                    onClick = { },
+                    selected = currentRoute == NavigationRoutes.GOALS,
+                    onClick = { navController.navigate(NavigationRoutes.GOALS) },
                     label = { Text("Goals") }
                 )
             }
