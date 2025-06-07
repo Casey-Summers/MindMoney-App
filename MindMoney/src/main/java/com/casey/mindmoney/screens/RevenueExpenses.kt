@@ -3,6 +3,7 @@ package com.casey.mindmoney.screens
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,12 +14,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -31,62 +34,79 @@ import com.casey.mindmoney.ui.theme.tertiaryLight
 
 @Composable
 fun RevenueExpensesScreen(navController: NavHostController) {
+    val revenueTotal = 2072
+    val expenseTotal = 440
+    val goalSpending = 300
+    val remaining = revenueTotal - expenseTotal - goalSpending
+
     MainScaffold(navController, NavigationRoutes.MANAGE) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp, vertical = 24.dp)
+                .padding(horizontal = 16.dp, vertical = 10.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             // Revenue section
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(2.dp, tertiaryLight, shape = MaterialTheme.shapes.medium)
-                    .padding(12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+            SectionBox(title = "Revenue", borderColor = tertiaryLight) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text("Revenue", style = MaterialTheme.typography.titleMedium)
                     Icon(Icons.Default.Add, contentDescription = "Add Revenue", tint = MaterialTheme.colorScheme.primary)
                 }
-
-                Text("• Wage: $1970", style = MaterialTheme.typography.bodyLarge)
-                Text("• Stocks: $102", style = MaterialTheme.typography.bodyLarge)
+                Text("• Wage: \$1970")
+                Text("• Stocks: \$102")
             }
 
             // Expenses section
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(2.dp, errorLight, shape = MaterialTheme.shapes.medium)
-                    .padding(12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+            SectionBox(title = "Expenses", borderColor = errorLight) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text("Expenses", style = MaterialTheme.typography.titleMedium)
                     Icon(Icons.Default.Add, contentDescription = "Add Expense", tint = MaterialTheme.colorScheme.primary)
                 }
-
-                Text("• Groceries: $240", style = MaterialTheme.typography.bodyLarge)
-                Text("• Utilities: $120", style = MaterialTheme.typography.bodyLarge)
-                Text("• Transport: $80", style = MaterialTheme.typography.bodyLarge)
+                Text("• Groceries: \$240")
+                Text("• Utilities: \$120")
+                Text("• Transport: \$80")
             }
+
+            // Goals section (NEW)
+            SectionBox(title = "Goals", borderColor = Color(0xFF8E24AA)) {
+                Text("• Goal Spending: \$${goalSpending}")
+            }
+
+            // Remaining section (NEW)
+            Divider()
+            Text(
+                "Remaining Money: \$${remaining}",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
 
             Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
+
+@Composable
+fun SectionBox(title: String, borderColor: Color, content: @Composable ColumnScope.() -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(2.dp, borderColor, shape = MaterialTheme.shapes.medium)
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        content = content
+    )
+}
+
 
 @Preview(name = "Preview Mode", showBackground = true, showSystemUi = true)
 @Composable
