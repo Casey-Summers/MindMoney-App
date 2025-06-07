@@ -15,6 +15,7 @@ import com.casey.mindmoney.navigation.NavigationRoutes
 import com.casey.mindmoney.screens.GoalsScreen
 import com.casey.mindmoney.screens.HomePageScreen
 import com.casey.mindmoney.screens.RevenueExpensesScreen
+import com.casey.mindmoney.screens.SuggestionsScreen
 import com.casey.mindmoney.ui.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
@@ -43,6 +44,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(NavigationRoutes.GOALS) {
                             GoalsScreen(navController)
+                        }
+                        composable(NavigationRoutes.SUGGESTIONS) {
+                            SuggestionsScreen(navController)
                         }
                     }
                 }

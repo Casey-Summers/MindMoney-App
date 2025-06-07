@@ -74,7 +74,7 @@ fun HomePageScreen(navController: NavHostController) {
                     Text("Rank", style = MaterialTheme.typography.titleMedium)
                     Spacer(modifier = Modifier.height(4.dp))
                     Icon(Icons.Default.ArrowUpward, contentDescription = "Rank", tint = MaterialTheme.colorScheme.primary)
-                    Text("Top 99%", color = MaterialTheme.colorScheme.onBackground)
+                    Text("Top 70%", color = MaterialTheme.colorScheme.onBackground)
                 }
             }
 
@@ -102,7 +102,7 @@ fun HomePageScreen(navController: NavHostController) {
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.onPrimary
                         ),
-                        onClick = { }
+                        onClick = { navController.navigate(NavigationRoutes.SUGGESTIONS) }
                     ) {
                         Text("Suggestions")
                     }
