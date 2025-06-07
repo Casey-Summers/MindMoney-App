@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
                             HomePageScreen(navController)
                         }
                         composable(NavigationRoutes.MANAGE) {
-                            RevenueExpensesScreen()
+                            RevenueExpensesScreen(navController)
                         }
                     }
                 }

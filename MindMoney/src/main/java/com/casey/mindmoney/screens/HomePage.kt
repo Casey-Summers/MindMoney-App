@@ -1,6 +1,5 @@
 package com.casey.mindmoney.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,18 +16,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Money
-import androidx.compose.material.icons.filled.PsychologyAlt
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -40,37 +32,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.casey.mindmoney.components.AllowanceField
+import com.casey.mindmoney.components.MainScaffold
 import com.casey.mindmoney.components.PieChartWithTotal
 import com.casey.mindmoney.navigation.NavigationRoutes
 import com.casey.mindmoney.ui.theme.AppTheme
 
-
 @Composable
 fun HomePageScreen(navController: NavHostController) {
-    Scaffold(
-        bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Money, contentDescription = "Manage") },
-                    selected = false,
-                    onClick = { navController.navigate(NavigationRoutes.MANAGE) },
-                    label = { Text("<Manage>") }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                    selected = true,
-                    onClick = { },
-                    label = { Text("Home") }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Star, contentDescription = "Goals") },
-                    selected = false,
-                    onClick = { },
-                    label = { Text("Goals") }
-                )
-            }
-        }
-    ) { paddingValues ->
+    MainScaffold(navController, NavigationRoutes.HOME) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -79,25 +48,6 @@ fun HomePageScreen(navController: NavHostController) {
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.primary)
-                    .padding(12.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.PsychologyAlt, contentDescription = "Logo", tint = MaterialTheme.colorScheme.onPrimary)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("MindMoney", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onPrimary)
-                    }
-                    Text("User ▼", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary)
-                }
-            }
 
             // Pie Charts
             Row(
@@ -183,13 +133,12 @@ fun HomePageScreen(navController: NavHostController) {
     }
 }
 
-
-@Preview(name = "Preview Mode", showBackground = true, showSystemUi = true)
+@Preview(name = "Revenue & Expenses Preview", showBackground = true, showSystemUi = true)
 @Composable
-fun HomePageLightPreview() {
+fun RevenueExpensesPreview() {
     AppTheme(darkTheme = false, dynamicColor = false) {
         val dummyNavController = rememberNavController()
-        HomePageScreen(navController = dummyNavController)
+        RevenueExpensesScreen(navController = dummyNavController)
     }
 }
 
