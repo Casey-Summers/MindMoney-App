@@ -37,20 +37,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.casey.mindmoney.components.AllowanceField
 import com.casey.mindmoney.components.PieChartWithTotal
+import com.casey.mindmoney.navigation.NavigationRoutes
 import com.casey.mindmoney.ui.theme.AppTheme
 
+
 @Composable
-fun HomePageScreen() {
+fun HomePageScreen(navController: NavHostController) {
     Scaffold(
         bottomBar = {
             NavigationBar {
                 NavigationBarItem(
-                    icon = { Icon(Icons.Default.Money, contentDescription = "Revenue") },
+                    icon = { Icon(Icons.Default.Money, contentDescription = "Manage") },
                     selected = false,
-                    onClick = { },
-                    label = { Text("Revenue") }
+                    onClick = { navController.navigate(NavigationRoutes.MANAGE) },
+                    label = { Text("<Manage>") }
                 )
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
@@ -184,6 +188,8 @@ fun HomePageScreen() {
 @Composable
 fun HomePageLightPreview() {
     AppTheme(darkTheme = false, dynamicColor = false) {
-        HomePageScreen()
+        val dummyNavController = rememberNavController()
+        HomePageScreen(navController = dummyNavController)
     }
 }
+
