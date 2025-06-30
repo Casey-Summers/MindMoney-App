@@ -33,7 +33,8 @@ fun RevenueExpensesScreen(navController: NavHostController) {
     val incomeList = transactionViewModel.incomeTransactions.collectAsState().value
     val expenseList = transactionViewModel.expenseTransactions.collectAsState().value
 
-    var showAddDialog by remember { mutableStateOf(false) }
+    var showRevenueDialog by remember { mutableStateOf(false) }
+    var showExpenseDialog by remember { mutableStateOf(false) }
     var addType by remember { mutableStateOf("Income") }
 
     val revenueTotal = incomeList.sumOf { it.amount }
@@ -64,7 +65,7 @@ fun RevenueExpensesScreen(navController: NavHostController) {
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.clickable {
                             addType = "Income"
-                            showAddDialog = true
+                            showRevenueDialog = true
                         }
                     )
                 }
@@ -86,8 +87,8 @@ fun RevenueExpensesScreen(navController: NavHostController) {
                         contentDescription = "Add Revenue",
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.clickable {
-                            addType = "Income"
-                            showAddDialog = true
+                            addType = "expense"
+                            showRevenueDialog = true
                         }
                     )
                 }
@@ -96,12 +97,12 @@ fun RevenueExpensesScreen(navController: NavHostController) {
                 }
             }
 
-            // Goals section (NEW)
+            // Goals section
             SectionBox(title = "Goals", borderColor = Color(0xFF8E24AA)) {
                 Text("• Goal Spending: \$${goalSpending}")
             }
 
-            // Remaining section (NEW)
+            // Remaining section
             HorizontalDivider()
             Text(
                 "Remaining Money: \$${"%.2f".format(remaining)}",
@@ -111,11 +112,13 @@ fun RevenueExpensesScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            if (showAddDialog) {
+            // === Pop-up Dialog Section ===
+            // Pop-up Dialog for adding Revenue
+            if (showRevenueDialog) {
                 AddTransactionDialog(
                     title = addType,
                     type = addType,
-                    onDismiss = { showAddDialog = false },
+                    onDismiss = { showRevenueDialog = false },
                     onSave = { amount, category, note, date, type ->
                         transactionViewModel.addTransaction(
                             TransactionEnt(
@@ -126,7 +129,28 @@ fun RevenueExpensesScreen(navController: NavHostController) {
                                 date = date
                             )
                         )
-                        showAddDialog = false
+                        showRevenueDialog = false
+                    }
+                )
+            }
+
+            // Pop-up Dialog for adding Expense
+            if (showExpenseDialog) {
+                AddTransactionDialog(
+                    title = "Add Expense",
+                    type = "expense",
+                    onDismiss = { showExpenseDialog = false },
+                    onSave = { amount, category, note, date, type ->
+                        transactionViewModel.addTransaction(
+                            TransactionEnt(
+                                amount = amount,
+                                type = type,
+                                category = category,
+                                note = note,
+                                date = date
+                            )
+                        )
+                        showExpenseDialog = false
                     }
                 )
             }
