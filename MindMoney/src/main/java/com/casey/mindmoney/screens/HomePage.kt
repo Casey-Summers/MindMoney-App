@@ -133,12 +133,12 @@ fun HomePageScreen(navController: NavHostController) {
     }
 }
 
-@Preview(name = "Revenue & Expenses Preview", showBackground = true, showSystemUi = true)
+@Preview(name = "Home Page Preview", showBackground = true, showSystemUi = true)
 @Composable
 fun RevenueExpensesPreview() {
     AppTheme(darkTheme = false, dynamicColor = false) {
         val dummyNavController = rememberNavController()
-        RevenueExpensesScreen(navController = dummyNavController)
+        HomePageScreen(navController = dummyNavController)
     }
 }
 

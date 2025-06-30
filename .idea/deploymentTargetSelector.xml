@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="MindMoney">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-06-06T13:59:58.996001500Z">
+        <DropdownSelection timestamp="2025-06-08T10:13:37.986229Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\aceca\.android\avd\Resizable_Experimental.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\aceca\.android\avd\Pixel_XL.avd" />
             </handle>
           </Target>
         </DropdownSelection>
