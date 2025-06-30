@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -16,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -46,23 +49,15 @@ fun RevenueExpensesScreen(navController: NavHostController) {
     val remaining = revenueTotal - expenseTotal - goalSpending
 
     val isLight = !isSystemInDarkTheme()
+    val footerHeight = 64.dp
 
     val gradientColors = if (isLight) {
-        listOf(
-            Color(0xFFDFF5E1), // light green
-            Color(0xFFFFE5E5), // light red
-            Color(0xFFF3E5F5)  // light purple
-        )
+        listOf(Color(0xFFDFF5E1), Color(0xFFFFE5E5), Color(0xFFF3E5F5))
     } else {
-        listOf(
-            Color(0xFF1E2D1E), // dark green
-            Color(0xFF2E1F1F), // dark red
-            Color(0xFF2A1F2E)  // dark purple
-        )
+        listOf(Color(0xFF1E2D1E), Color(0xFF2E1F1F), Color(0xFF2A1F2E))
     }
 
     MainScaffold(navController, NavigationRoutes.MANAGE) { paddingValues ->
-        val footerHeight = 64.dp
 
         Box(
             modifier = Modifier
@@ -83,61 +78,122 @@ fun RevenueExpensesScreen(navController: NavHostController) {
                     .padding(horizontal = 16.dp, vertical = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
+
                 // Revenue section
-                SectionBox(title = "Revenue", borderColor = tertiaryLight) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("Revenue", style = MaterialTheme.typography.titleMedium)
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add Revenue",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.clickable {
-                                addType = "Income"
-                                showRevenueDialog = true
-                            }
-                        )
-                    }
-                    incomeList.forEach { transaction ->
-                        Text("• ${transaction.category}: \$${transaction.amount}")
+                val revenueTotalFormatted = "$${"%.2f".format(revenueTotal)}"
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(0.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    SectionHeader(
+                        title = "Revenue",
+                        total = revenueTotalFormatted,
+                        backgroundColor = MaterialTheme.colorScheme.primary,
+                        textColor = Color.White
+                    )
+
+                    SectionBox(title = "Revenue", borderColor = tertiaryLight) {
+                        incomeList.forEach { transaction ->
+                            Text("• ${transaction.category}: \$${transaction.amount}")
+                        }
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    addType = "Income"
+                                    showRevenueDialog = true
+                                },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add Revenue",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Add new income", color = MaterialTheme.colorScheme.primary)
+                        }
                     }
                 }
 
                 // Expenses section
-                SectionBox(title = "Expenses", borderColor = errorLight) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("Expenses", style = MaterialTheme.typography.titleMedium)
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add Revenue",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.clickable {
-                                addType = "expense"
-                                showExpenseDialog = true
-                            }
-                        )
-                    }
-                    expenseList.forEach { transaction ->
-                        Text("• ${transaction.category}: \$${transaction.amount}")
+                val expenseTotalFormatted = "$${"%.2f".format(expenseTotal)}"
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(0.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    SectionHeader(
+                        title = "Expenses",
+                        total = expenseTotalFormatted,
+                        backgroundColor = MaterialTheme.colorScheme.error,
+                        textColor = Color.White
+                    )
+
+                    SectionBox(title = "Expenses", borderColor = errorLight) {
+                        expenseList.forEach { transaction ->
+                            Text("• ${transaction.category}: \$${transaction.amount}")
+                        }
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    addType = "expense"
+                                    showExpenseDialog = true
+                                },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add Expense",
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Add new expense", color = MaterialTheme.colorScheme.error)
+                        }
                     }
                 }
 
                 // Goals section
-                SectionBox(title = "Goals", borderColor = Color(0xFF8E24AA)) {
-                    Text("• Goal Spending: \$${goalSpending}")
+                val goalFormatted = "$${"%.2f".format(goalSpending)}"
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(0.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    SectionHeader(
+                        title = "Goals",
+                        total = goalFormatted,
+                        backgroundColor = Color(0xFF8E24AA),
+                        textColor = Color.White
+                    )
+
+                    SectionBox(title = "Goals", borderColor = Color(0xFF8E24AA)) {
+                        Text("• Goal Spending This Period: $goalFormatted")
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "This value represents the total spent toward active goals this period.\nMore details can be found on the Goals page.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "→ View Goals Page",
+                            color = MaterialTheme.colorScheme.tertiary,
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                            modifier = Modifier.clickable {
+                                navController.navigate(NavigationRoutes.GOALS)
+                            }
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(footerHeight + 16.dp))
 
                 // === Pop-up Dialog Section ===
-                // Pop-up Dialog for adding Revenue
                 if (showRevenueDialog) {
                     AddTransactionDialog(
                         title = addType,
@@ -145,20 +201,13 @@ fun RevenueExpensesScreen(navController: NavHostController) {
                         onDismiss = { showRevenueDialog = false },
                         onSave = { amount, category, note, date, type ->
                             transactionViewModel.addTransaction(
-                                TransactionEnt(
-                                    amount = amount,
-                                    type = type,
-                                    category = category,
-                                    note = note,
-                                    date = date
-                                )
+                                TransactionEnt(amount = amount, type = type, category = category, note = note, date = date)
                             )
                             showRevenueDialog = false
                         }
                     )
                 }
 
-                // Pop-up Dialog for adding Expense
                 if (showExpenseDialog) {
                     AddTransactionDialog(
                         title = "Add Expense",
@@ -166,13 +215,7 @@ fun RevenueExpensesScreen(navController: NavHostController) {
                         onDismiss = { showExpenseDialog = false },
                         onSave = { amount, category, note, date, type ->
                             transactionViewModel.addTransaction(
-                                TransactionEnt(
-                                    amount = amount,
-                                    type = type,
-                                    category = category,
-                                    note = note,
-                                    date = date
-                                )
+                                TransactionEnt(amount = amount, type = type, category = category, note = note, date = date)
                             )
                             showExpenseDialog = false
                         }
@@ -181,7 +224,6 @@ fun RevenueExpensesScreen(navController: NavHostController) {
             }
 
             // === Sticky Footer ===
-            // Remaining Money section
             Surface(
                 tonalElevation = 4.dp,
                 color = MaterialTheme.colorScheme.surface,
@@ -200,7 +242,7 @@ fun RevenueExpensesScreen(navController: NavHostController) {
                     Text(
                         "Remaining Money: \$${"%.2f".format(remaining)}",
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 }
             }
@@ -221,9 +263,47 @@ fun SectionBox(title: String, borderColor: Color, content: @Composable ColumnSco
     )
 }
 
+@Composable
+fun SectionHeader(
+    title: String,
+    total: String,
+    backgroundColor: Color,
+    textColor: Color
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = backgroundColor,
+        shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+        tonalElevation = 2.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 0.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = title,
+                color = textColor,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.weight(2f),
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = total,
+                color = textColor,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.End
+            )
+        }
+    }
+}
+
 @Preview(name = "Preview Mode", showBackground = true, showSystemUi = true)
 @Composable
-fun RevenueExpensesScreen() {
+fun RevenueExpensesScreenPreview() {
     AppTheme(darkTheme = false, dynamicColor = false) {
         val dummyNavController = rememberNavController()
         RevenueExpensesScreen(navController = dummyNavController)
