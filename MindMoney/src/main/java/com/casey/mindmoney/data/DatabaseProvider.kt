@@ -11,10 +11,13 @@ object DatabaseProvider {
     fun getDatabase(context: Context): AppDatabase {
         return INSTANCE ?: synchronized(this) {
             Room.databaseBuilder(
-                context.applicationContext,   // prevents memory leaks from Activity
-                AppDatabase::class.java,      // tells Room which DB class to build
-                "mindmoney_database"    // file name for the actual SQLite DB
-            ).build().also { INSTANCE = it }  // stores and returns it
+                context.applicationContext,
+                AppDatabase::class.java,
+                "mindmoney_database"
+            )
+                .fallbackToDestructiveMigration()
+                .build()
+                .also { INSTANCE = it }
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.casey.mindmoney.screens
 
+import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,9 +33,13 @@ import com.casey.mindmoney.navigation.NavigationRoutes
 import com.casey.mindmoney.ui.theme.AppTheme
 import com.casey.mindmoney.ui.theme.errorLight
 import com.casey.mindmoney.ui.theme.tertiaryLight
+import com.casey.mindmoney.data.ViewModels.BudgetPeriodView
 
 @Composable
-fun RevenueExpensesScreen(navController: NavHostController) {
+fun RevenueExpensesScreen(
+    navController: NavHostController,
+    budgetPeriodView: BudgetPeriodView
+) {
     val transactionViewModel: TransactionViewModel = viewModel()
     val incomeList = transactionViewModel.incomeTransactions.collectAsState().value
     val expenseList = transactionViewModel.expenseTransactions.collectAsState().value
@@ -306,6 +311,14 @@ fun SectionHeader(
 fun RevenueExpensesScreenPreview() {
     AppTheme(darkTheme = false, dynamicColor = false) {
         val dummyNavController = rememberNavController()
-        RevenueExpensesScreen(navController = dummyNavController)
+        val fakeBudgetPeriodView = remember {
+            BudgetPeriodView(Application())
+        }
+
+        RevenueExpensesScreen(
+            navController = dummyNavController,
+            budgetPeriodView = fakeBudgetPeriodView
+        )
     }
 }
+
