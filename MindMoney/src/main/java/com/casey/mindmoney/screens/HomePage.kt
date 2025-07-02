@@ -31,29 +31,26 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.casey.mindmoney.components.AllowanceField
 import com.casey.mindmoney.components.MainScaffold
 import com.casey.mindmoney.components.PieChartWithTotal
 import com.casey.mindmoney.data.ViewModels.BudgetPeriodView
+import com.casey.mindmoney.data.ViewModels.BudgetView
 import com.casey.mindmoney.navigation.NavigationRoutes
 import com.casey.mindmoney.ui.theme.AppTheme
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import com.casey.mindmoney.data.ViewModels.BudgetView
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.text.input.ImeAction
 
 
 @Composable
@@ -134,9 +131,21 @@ fun HomePageScreen(
 
             // Budgets per defined period
             val currentPeriod by budgetPeriodView.period.collectAsStateWithLifecycle()
+            val budget by budgetView.budget.collectAsStateWithLifecycle()
+            var showInfoDialog by remember { mutableStateOf(false) }
 
-            Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+            val totalBudget = budget.oneOff + budget.recurring + budget.goals + budget.leftOver
+            val totalFormatted = "$${"%.2f".format(totalBudget)}"
+
+            Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Total ", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+
                     Button(
                         onClick = {
                             val next = when (currentPeriod) {
@@ -147,65 +156,72 @@ fun HomePageScreen(
                             budgetPeriodView.setPeriod(next)
                         },
                         shape = RoundedCornerShape(4.dp),
-                        contentPadding = PaddingValues(horizontal = 10.dp),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f),
                             contentColor = MaterialTheme.colorScheme.onPrimary
                         ),
-                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
                     ) {
-                        Text(
-                            text = currentPeriod,
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Budgets", style = MaterialTheme.typography.titleMedium)
-
-                    var showInfoDialog by remember { mutableStateOf(false) }
-
-                    TextButton(onClick = { showInfoDialog = true }) {
-                        Text("Not sure? Learn more here.", style = MaterialTheme.typography.bodySmall)
+                        Text(currentPeriod, style = MaterialTheme.typography.labelLarge)
                     }
 
-                    if (showInfoDialog) {
-                        AlertDialog(
-                            onDismissRequest = { showInfoDialog = false },
-                            title = { Text("About Budgeting Periods") },
-                            text = {
-                                Text("Setting your budget defines when your one-off expenses will reset. " +
+                    Text(
+                        text = " Budget: $totalFormatted",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                Text(
+                    text = "Not sure? Learn more here.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(top = 2.dp)
+                        .clickable { showInfoDialog = true }
+                )
+
+                // Dialog
+                if (showInfoDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showInfoDialog = false },
+                        title = { Text("About Budgeting Periods") },
+                        text = {
+                            Text(
+                                "Setting your budget defines when your one-off expenses will reset. " +
                                         "It’s recommended you match this with your pay cycle. Use the fields below to estimate how much " +
-                                        "you intend to spend on each category per period.")
-                            },
-                            confirmButton = {
-                                TextButton(onClick = { showInfoDialog = false }) {
-                                    Text("Close")
-                                }
+                                        "you intend to spend on each category per period."
+                            )
+                        },
+                        confirmButton = {
+                            TextButton(onClick = { showInfoDialog = false }) {
+                                Text("Close")
                             }
-                        )
+                        }
+                    )
+                }
+            }
+
+            // Input fields
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    BudgetInputField("One-off Expenses", budget.oneOff) {
+                        budgetView.updateField("oneOff", it)
+                    }
+                    BudgetInputField("Recurring Expenses", budget.recurring) {
+                        budgetView.updateField("recurring", it)
+                    }
+                    BudgetInputField("Goals", budget.goals) {
+                        budgetView.updateField("goals", it)
+                    }
+                    BudgetInputField("Left-over Saving", budget.leftOver) {
+                        budgetView.updateField("leftOver", it)
                     }
                 }
-            }
-
-            val budget by budgetView.budget.collectAsStateWithLifecycle()
-
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                BudgetInputField("One-off Expenses", budget.oneOff) {
-                    budgetView.updateField("oneOff", it)
-                }
-                BudgetInputField("Recurring Expenses", budget.recurring) {
-                    budgetView.updateField("recurring", it)
-                }
-                BudgetInputField("Goals", budget.goals) {
-                    budgetView.updateField("goals", it)
-                }
-                BudgetInputField("Left-over Saving", budget.leftOver) {
-                    budgetView.updateField("leftOver", it)
-                }
-            }
 
             Spacer(modifier = Modifier.height(25.dp))
         }
@@ -242,25 +258,23 @@ fun BudgetInputField(
         keyboardActions = KeyboardActions(
             onNext = {
                 isSelected = false
-                // Optionally move focus to next field programmatically
             }
         )
     )
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true, showSystemUi = true, name = "HomePage Preview")
 @Composable
 fun HomePagePreview() {
     AppTheme(darkTheme = false, dynamicColor = false) {
-        val dummyNavController = rememberNavController()
-        val fakeBudgetPeriodView = remember { BudgetPeriodView(Application()) }
-        val fakeBudgetView = remember { BudgetView(Application()) }
+        val navController = rememberNavController()
+        val previewBudgetPeriodView = remember { BudgetPeriodView(Application()) }
+        val previewBudgetView = remember { BudgetView(Application()) }
 
         HomePageScreen(
-            navController = dummyNavController,
-            budgetPeriodView = fakeBudgetPeriodView,
-            budgetView = fakeBudgetView
+            navController = navController,
+            budgetPeriodView = previewBudgetPeriodView,
+            budgetView = previewBudgetView
         )
     }
 }
-
