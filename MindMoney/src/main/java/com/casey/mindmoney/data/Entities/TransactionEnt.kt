@@ -6,11 +6,13 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "transactions")
 data class TransactionEnt(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0, // Tracks transaction's unique ID
+    val id: Int = 0, // Unique ID
 
-    val amount: Double,         // defines the monetary value of the transaction
-    val type: String,           // "income", "expense", "investment", "goal", etc
-    val category: String,       // "groceries", "Rent"
-    val note: String?,          // optional description
-    val date: String            // date of transaction (temp string)
+    val amount: Double,              // Dollar value
+    val type: String,                // "income" or "expense"
+    val category: String,            // e.g. "rent", "groceries"
+    val note: String?,               // Optional user note
+    val date: String,                // Stored as ISO or readable format
+
+    val expenseType: String? = null  // "one-off" or "recurring" (invisible to UI)
 )

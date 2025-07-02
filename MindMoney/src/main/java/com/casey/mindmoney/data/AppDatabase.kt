@@ -9,8 +9,8 @@ import com.casey.mindmoney.data.Entities.BudgetEnt
 
 @Database(
     entities = [TransactionEnt::class, BudgetEnt::class],
-    version = 2,
-    exportSchema = true
+    version = 3, // increments by 1 with every Room database update
+    exportSchema = false // prevents KSP error
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun transaction(): TransactionDAO

@@ -53,7 +53,8 @@ class MainActivity : ComponentActivity() {
                         composable(NavigationRoutes.MANAGE) {
                             RevenueExpensesScreen(
                                 navController = navController,
-                                budgetPeriodView = budgetPeriodViewModel
+                                budgetPeriodView = budgetPeriodViewModel,
+                                budgetView = budgetViewModel
                             )
                         }
                         composable(NavigationRoutes.GOALS) {

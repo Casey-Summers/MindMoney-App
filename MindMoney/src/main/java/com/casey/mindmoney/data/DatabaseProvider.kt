@@ -10,14 +10,16 @@ object DatabaseProvider {
 
     fun getDatabase(context: Context): AppDatabase {
         return INSTANCE ?: synchronized(this) {
-            Room.databaseBuilder(
+            val instance = Room.databaseBuilder(
                 context.applicationContext,
                 AppDatabase::class.java,
                 "mindmoney_database"
             )
                 .fallbackToDestructiveMigration()
                 .build()
-                .also { INSTANCE = it }
+
+            INSTANCE = instance
+            instance
         }
     }
 }
